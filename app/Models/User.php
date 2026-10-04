@@ -34,7 +34,7 @@ class User extends Authenticatable
     public function canAccessPanel(Panel $panel): bool
     {
         // Change this logic to fit your authorization needs (e.g., email check)
-        return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+        return true;
 
         // Or simply return true if you want to allow all authenticated users:
         // return true;
