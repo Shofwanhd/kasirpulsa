@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
 use Database\Factories\UserFactory;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -33,10 +34,6 @@ class User extends Authenticatable
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // Change this logic to fit your authorization needs (e.g., email check)
         return true;
-
-        // Or simply return true if you want to allow all authenticated users:
-        // return true;
     }
 }
