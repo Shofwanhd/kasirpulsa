@@ -11,7 +11,7 @@ class Versioning extends StatsOverviewWidget
     {
         return [
             Stat::make('Version', '')
-                ->description('V1.0.0 Beta')
+                ->description('V1.0.1 Beta')
                 ->url('readme.md'),
         ];
     }

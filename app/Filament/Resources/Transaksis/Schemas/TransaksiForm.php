@@ -60,9 +60,9 @@ class TransaksiForm
             ],
         ];
 
-        $labelFor = fn (Get $get, string $field, string $fallback): string => $labelsByType[$get('jenis_transaksi') ?? ''][$field] ?? $fallback;
-        $isTypeSelected = fn (Get $get): bool => filled($get('jenis_transaksi'));
-        $isKasTunaiSelected = fn (Get $get): bool => filled($kasTunaiId) && (string) $get('akun_asal_id') === (string) $kasTunaiId;
+        $labelFor = fn(Get $get, string $field, string $fallback): string => $labelsByType[$get('jenis_transaksi') ?? ''][$field] ?? $fallback;
+        $isTypeSelected = fn(Get $get): bool => filled($get('jenis_transaksi'));
+        $isKasTunaiSelected = fn(Get $get): bool => filled($kasTunaiId) && (string) $get('akun_asal_id') === (string) $kasTunaiId;
 
         return $schema
             ->components([
@@ -89,29 +89,29 @@ class TransaksiForm
                 Section::make('Detail Transaksi')
                     ->schema([
                         DatePicker::make('tanggal')
-                            ->label(fn (Get $get): string => $labelFor($get, 'tanggal', 'Tanggal'))
+                            ->label(fn(Get $get): string => $labelFor($get, 'tanggal', 'Tanggal'))
                             ->required(),
                         Select::make('kategori_pulsa_id')
-                            ->label(fn (Get $get): string => $labelFor($get, 'kategori_pulsa_id', 'Kategori Pulsa'))
-                            ->options(fn (): array => KategoriPulsa::query()->pluck('kategori', 'id')->toArray())
-                            ->required(fn (Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
-                            ->visible(fn (Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
+                            ->label(fn(Get $get): string => $labelFor($get, 'kategori_pulsa_id', 'Kategori Pulsa'))
+                            ->options(fn(): array => KategoriPulsa::query()->pluck('kategori', 'id')->toArray())
+                            ->required(fn(Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
+                            ->visible(fn(Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
                             ->live()
                             ->afterStateUpdated(function (Set $set): void {
                                 $set('pulsa_id', null);
                                 $set('nominal', null);
                             }),
                         Select::make('pulsa_id')
-                            ->label(fn (Get $get): string => $labelFor($get, 'pulsa_id', 'Pulsa'))
-                            ->options(fn (Get $get): array => filled($get('kategori_pulsa_id'))
+                            ->label(fn(Get $get): string => $labelFor($get, 'pulsa_id', 'Pulsa'))
+                            ->options(fn(Get $get): array => filled($get('kategori_pulsa_id'))
                                 ? Pulsa::query()
-                                    ->where('kategori_pulsa_id', $get('kategori_pulsa_id'))
-                                    ->pluck('pulsa', 'id')
-                                    ->toArray()
+                                ->where('kategori_pulsa_id', $get('kategori_pulsa_id'))
+                                ->pluck('pulsa', 'id')
+                                ->toArray()
                                 : [])
-                            ->required(fn (Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
-                            ->visible(fn (Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
-                            ->disabled(fn (Get $get): bool => blank($get('kategori_pulsa_id')))
+                            ->required(fn(Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
+                            ->visible(fn(Get $get): bool => $get('jenis_transaksi') === 'Pulsa')
+                            ->disabled(fn(Get $get): bool => blank($get('kategori_pulsa_id')))
                             ->live()
                             ->afterStateUpdated(function (Set $set, ?string $state): void {
                                 $set(
@@ -120,35 +120,35 @@ class TransaksiForm
                                 );
                             }),
                         TextInput::make('keterangan')
-                            ->label(fn (Get $get): string => $labelFor($get, 'keterangan', 'Keterangan'))
+                            ->label(fn(Get $get): string => $labelFor($get, 'keterangan', 'Keterangan'))
                             ->required(),
                         Select::make('akun_asal_id')
-                            ->label(fn (Get $get): string => $labelFor($get, 'akun_asal_id', 'Akun Asal'))
-                            ->required(fn (Get $get): bool => $get('jenis_transaksi') !== 'Mutasi')
+                            ->label(fn(Get $get): string => $labelFor($get, 'akun_asal_id', 'Akun Asal'))
+                            ->required(fn(Get $get): bool => $get('jenis_transaksi') !== 'Mutasi')
                             ->options(Akun::query()->pluck('nama_akun', 'id'))
-                            ->visible(fn (Get $get): bool => $get('jenis_transaksi') !== 'Tarik Tunai' || ! $isKasTunaiSelected($get))
-                            ->dehydratedWhenHidden(fn (Get $get): bool => $get('jenis_transaksi') === 'Tarik Tunai' && $isKasTunaiSelected($get)),
+                            ->visible(fn(Get $get): bool => $get('jenis_transaksi') !== 'Tarik Tunai' || ! $isKasTunaiSelected($get))
+                            ->dehydratedWhenHidden(fn(Get $get): bool => $get('jenis_transaksi') === 'Tarik Tunai' && $isKasTunaiSelected($get)),
                         Select::make('akun_tujuan_id')
-                            ->label(fn (Get $get): string => $labelFor($get, 'akun_tujuan_id', 'Akun Tujuan'))
-                            ->required()
+                            ->label(fn(Get $get): string => $labelFor($get, 'akun_tujuan_id', 'Akun Tujuan'))
+                            ->required(fn(Get $get): bool => $get('jenis_transaksi') !== 'Mutasi')
                             ->options(Akun::query()->pluck('nama_akun', 'id')),
                         TextInput::make('nominal')
-                            ->label(fn (Get $get): string => $labelFor($get, 'nominal', 'Nominal'))
+                            ->label(fn(Get $get): string => $labelFor($get, 'nominal', 'Nominal'))
                             ->required()
                             ->numeric()
                             ->inputMode('decimal')
                             // Format parameters: $money($input, 'decimal_separator', 'thousands_separator', precision)
                             ->mask(RawJs::make(<<<'JS'
                                 $money($input, '.', ',', 2)
-                            JS))->stripCharacters(',')->dehydrateStateUsing(fn ($state) => $state !== null ? (float) $state : null)
+                            JS))->stripCharacters(',')->dehydrateStateUsing(fn($state) => $state !== null ? (float) $state : null)
                             ->default(0),
                         TextInput::make('amount')
-                            ->label(fn (Get $get): string => $labelFor($get, 'amount', 'Amount'))
+                            ->label(fn(Get $get): string => $labelFor($get, 'amount', 'Amount'))
                             ->required()
                             ->numeric()
                             ->mask(RawJs::make(<<<'JS'
                                 $money($input, '.', ',', 2)
-                            JS))->stripCharacters(',')->dehydrateStateUsing(fn ($state) => $state !== null ? (float) $state : null)
+                            JS))->stripCharacters(',')->dehydrateStateUsing(fn($state) => $state !== null ? (float) $state : null)
                             ->default(0),
                     ])
                     ->visible($isTypeSelected),
