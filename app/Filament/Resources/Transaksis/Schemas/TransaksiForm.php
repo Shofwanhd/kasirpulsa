@@ -56,7 +56,7 @@ class TransaksiForm
                 'akun_tujuan_id' => 'Akun Tujuan Mutasi',
                 'nominal' => 'Nominal Mutasi',
                 'admin' => 'Admin Mutasi',
-                'amount' => 'amount Mutasi',
+                'amount' => 'Amount Mutasi',
             ],
         ];
 
